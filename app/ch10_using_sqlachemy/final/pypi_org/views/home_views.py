@@ -1,5 +1,4 @@
 import flask
-
 from pypi_org.infrastructure.view_modifiers import response
 import pypi_org.services.package_service as package_service
 import pypi_org.services.user_service as user_service

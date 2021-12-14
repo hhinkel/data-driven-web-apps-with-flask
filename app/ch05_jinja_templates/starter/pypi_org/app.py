@@ -1,31 +1,38 @@
+import os
+import sys
 import flask
+folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, folder)
 
-from infrastructure.view_modifiers import response
+import pypi_org.data.db_session as db_session
 
 app = flask.Flask(__name__)
 
 
-def get_latest_packages():
-    return [
-        {'name': 'flask', 'version': '1.2.3'},
-        {'name': 'sqlalchemy', 'version': '2.2.0'},
-        {'name': 'passlib', 'version': '3.0.0'}
-    ]
+def main():
+    register_blueprints()
+    setup_db()
+    app.run(debug=True)
 
 
-@app.route('/')
-@response(template_file='Home/index.html')
-def index():
-    return {'packages': get_latest_packages()}
-    # return flask.render_template('Home/index.html', packages=get_latest_packages())
+def setup_db():
+    db_file = os.path.join(
+        os.path.dirname(__file__),
+        'db',
+        'pypi.sqlite')
+
+    db_session.global_init(db_file)
 
 
-@app.route('/about')
-@response(template_file='Home/about.html')
-def about():
-    return {}
-    # return flask.render_template('Home/about.html')
+def register_blueprints():
+    from pypi_org.views import home_views
+    from pypi_org.views import package_views
+    from pypi_org.views import cms_views
+
+    app.register_blueprint(package_views.blueprint)
+    app.register_blueprint(home_views.blueprint)
+    app.register_blueprint(cms_views.blueprint)
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    main()

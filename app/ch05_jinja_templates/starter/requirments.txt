@@ -1,1 +1,6 @@
 flask
+sqlalchemy
+
+progressbar2==3.55.0
+python-dateutil
+
